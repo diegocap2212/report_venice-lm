@@ -6,6 +6,7 @@ export async function GET(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params
+
   const { data: report, error: rErr } = await supabase
     .from('reports')
     .select('*')
@@ -13,11 +14,29 @@ export async function GET(
     .single()
   if (rErr) return NextResponse.json({ error: rErr.message }, { status: 404 })
 
+  // Fetch events without join
   const { data: events } = await supabase
     .from('events')
-    .select('*, action_plans!action_plans_event_id_fkey(*), squad:squads(*, sm:sms(*))')
+    .select('*, squad:squads(*, sm:sms(*))')
     .eq('report_id', report.id)
     .order('sort_order')
+
+  // Fetch action_plans separately
+  const eventIds = (events || []).map((e: any) => e.id)
+  let actionPlans: any[] = []
+  if (eventIds.length > 0) {
+    const { data: plans } = await supabase
+      .from('action_plans')
+      .select('*')
+      .in('event_id', eventIds)
+    actionPlans = plans || []
+  }
+
+  // Attach action_plans to each event
+  const eventsWithPlans = (events || []).map((e: any) => ({
+    ...e,
+    action_plans: actionPlans.filter((p: any) => p.event_id === e.id)
+  }))
 
   const { data: snapshots } = await supabase
     .from('cone_snapshots')
@@ -25,7 +44,11 @@ export async function GET(
     .eq('report_id', report.id)
     .order('week_start')
 
-  return NextResponse.json({ report, events: events || [], snapshots: snapshots || [] })
+  return NextResponse.json({
+    report,
+    events: eventsWithPlans,
+    snapshots: snapshots || []
+  })
 }
 
 export async function PATCH(

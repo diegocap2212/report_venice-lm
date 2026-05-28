@@ -14,16 +14,17 @@ export async function POST(req: NextRequest) {
 
   if (action_plans?.length) {
     const plans = action_plans.map((p: any) => ({ ...p, event_id: ev.id }))
-    await supabase.from('action_plans').insert(plans)
+    const { error: apErr } = await supabase.from('action_plans').insert(plans)
+    if (apErr) console.error('action_plans insert error:', apErr.message)
   }
 
-  const { data: full } = await supabase
-    .from('events')
-    .select('*, action_plans!action_plans_event_id_fkey(*)')
-    .eq('id', ev.id)
-    .single()
+  // Fetch action_plans separately to avoid schema cache join issues
+  const { data: plans } = await supabase
+    .from('action_plans')
+    .select('*')
+    .eq('event_id', ev.id)
 
-  return NextResponse.json(full)
+  return NextResponse.json({ ...ev, action_plans: plans || [] })
 }
 
 export async function DELETE(req: NextRequest) {
