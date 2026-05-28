@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
 
   const { data: full } = await supabase
     .from('events')
-    .select('*, action_plans(*)')
+    .select('*, action_plans!action_plans_event_id_fkey(*)')
     .eq('id', ev.id)
     .single()
 

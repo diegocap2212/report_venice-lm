@@ -15,7 +15,7 @@ export async function GET(
 
   const { data: events } = await supabase
     .from('events')
-    .select('*, action_plans(*), squad:squads(*, sm:sms(*))')
+    .select('*, action_plans!action_plans_event_id_fkey(*), squad:squads(*, sm:sms(*))')
     .eq('report_id', report.id)
     .order('sort_order')
 
