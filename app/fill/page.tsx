@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { Squad, Report, EventType, ActionStatus, EVENT_CONFIG } from '@/types'
 import { Plus, Trash2, ChevronDown, CheckCircle } from 'lucide-react'
+import { ConeUpload } from '@/components/form/ConeUpload'
 
 interface ActionDraft {
   owner: string
@@ -240,6 +241,14 @@ export default function FillPage() {
                       </div>
 
                       <div className="p-4 flex flex-col gap-3">
+                        {/* Cone XLSX upload */}
+                        {report && (
+                          <ConeUpload
+                            reportId={report.id}
+                            squadId={squad.id}
+                            squadName={squad.name}
+                          />
+                        )}
                         {squadEvents.length === 0 && (
                           <p className="text-sm text-gray-400 text-center py-4 italic">
                             Nenhum evento ainda. Clique em "Adicionar evento".
