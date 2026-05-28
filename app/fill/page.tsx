@@ -178,6 +178,8 @@ export default function FillPage() {
                   className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400"
                   value={newReport.period_start}
                   onChange={e => setNewReport(p => ({ ...p, period_start: e.target.value }))}
+                  max="2099-12-31"
+                  min="2020-01-01"
                 />
               </div>
               <div>
@@ -187,6 +189,8 @@ export default function FillPage() {
                   className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400"
                   value={newReport.period_end}
                   onChange={e => setNewReport(p => ({ ...p, period_end: e.target.value }))}
+                  max="2099-12-31"
+                  min="2020-01-01"
                 />
               </div>
             </div>
