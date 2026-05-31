@@ -53,9 +53,15 @@ export default function FillPage() {
     fetch('/api/squads').then(r => r.json()).then(setSquads)
     if (reportSlug) {
       fetch(`/api/reports/${reportSlug}`)
-        .then(r => r.json())
+        .then(async r => {
+          if (!r.ok) throw new Error('Relatório não encontrado')
+          return r.json()
+        })
         .then(d => setReport(d.report))
-        .catch(() => {})
+        .catch(err => {
+          setError(err?.message || 'Erro ao carregar o relatório')
+          setReport(null)
+        })
     }
   }, [reportSlug])
 
@@ -111,11 +117,12 @@ export default function FillPage() {
     setError('')
     try {
       for (const [i, ev] of events.entries()) {
+        const { action_plans: _skip, ...eventPayload } = ev
         const res = await fetch('/api/events', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            event: { ...ev, report_id: report.id, sort_order: i },
+            event: { ...eventPayload, report_id: report.id, sort_order: i },
             action_plans: ev.action_plans.filter(a => a.owner && a.action),
           }),
         })

@@ -3,3 +3,21 @@ node_modules/
 .env.local
 .env
 *.log
+
+# Análises e scripts temporários
+ANALISE_*.md
+FLUXO_*.md
+MAPA_*.md
+README_ANALISE*.md
+SOLUCAO_FINAL.md
+analyze-cone-*
+create-cone-test*.js
+inspect-*.js
+find-data-sheets.js
+generate-deep-report.js
+validate-cone-columns.js
+
+# Dados de teste e exploração
+*.xlsx
+body.json
+newreport.json

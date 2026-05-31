@@ -58,6 +58,14 @@ export interface ConeSnapshot {
   throughput: number
   backlog_remaining: number
   lead_time_p85?: number
+  wip?: number
+  items_planned?: number
+  items_unplanned?: number
+  items_bugs?: number
+  items_new?: number
+  items_discarded?: number
+  created_at?: string
+  updated_at?: string
 }
 
 export const EVENT_CONFIG: Record<EventType, {
